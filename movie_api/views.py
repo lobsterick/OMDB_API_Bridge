@@ -77,4 +77,3 @@ class CommentsView(APIView):
             else:
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data={"Error": "No movie with that id"}, status=status.HTTP_400_BAD_REQUEST)
-
