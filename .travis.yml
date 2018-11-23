@@ -6,7 +6,7 @@ install:
 env:
 - DJ_DEBUG=False DATABASE_URL=postgres://postgres@localhost/travisdb
 before_script:
-- psql -c "CREATE DATABASE travisdb;" -U postgres
+- psql -c "CREATE DATABASE IF NOT EXISTS travisdb;" -U postgres
 - python manage.py migrate --noinput
 script:
 - python manage.py test
