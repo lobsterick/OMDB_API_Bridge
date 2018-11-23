@@ -71,7 +71,6 @@ class CommentsView(APIView):
         if Movie.objects.filter(id=request.data["movie_id"]).exists():
             serializer = CommentSerializer(data=request.data)
             if serializer.is_valid():
-                print(serializer)
                 serializer.save()
                 return Response(serializer.data)
             else:

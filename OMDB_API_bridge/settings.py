@@ -40,6 +40,9 @@ INSTALLED_APPS = [
 
     # my_apps
     'movie_api'
+
+    # third party apps
+    # 'rest_framework',
 ]
 
 MIDDLEWARE = [
