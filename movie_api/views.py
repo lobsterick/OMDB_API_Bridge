@@ -10,6 +10,9 @@ from django.http import HttpResponse
 def welcome(request):
     return HttpResponse("Hello! I'm working :)")
 
+def welcomehome(request):
+    return HttpResponse("More info on: github.com/lobsterick/OMDB_API_bridge/")
+
 
 class MoviesView(APIView):
 
