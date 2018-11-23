@@ -1,7 +1,7 @@
-Django==2.0.3
+Django==2.0.8
 djangorestframework==3.9.0
 drf_writable_nested==0.5.1
-requests==2.19.1
+requests==2.20.0
 django-heroku
 gunicorn
 dj_database_url
