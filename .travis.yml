@@ -9,4 +9,4 @@ before_script:
 - psql -c "CREATE DATABASE travisdb;" -U postgres
 - python manage.py migrate --noinput
 script:
-- python manage.py test 
+- python manage.py test
