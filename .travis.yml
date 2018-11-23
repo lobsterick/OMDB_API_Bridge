@@ -1,0 +1,12 @@
+language: python
+python:
+- "3.7-dev"
+install:
+- pip install -r requirements.txt
+env:
+- DJ_DEBUG=False DATABASE_URL=postgres://postgres@localhost/travisdb
+before_script:
+- psql -c "CREATE DATABASE travisdb;" -U postgres
+- python manage.py migrate --noinput
+script:
+- python manage.py test 

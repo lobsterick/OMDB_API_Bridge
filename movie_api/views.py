@@ -43,7 +43,6 @@ class MoviesView(APIView):
                     serializer.save()
                     return Response(serializer.data)
                 else:
-                    print(serializer.errors)
                     return Response(data={"Error": "Problem with serializing data from external API"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 movie_from_database = Movie.objects.get(Title=response.json()['Title'])
