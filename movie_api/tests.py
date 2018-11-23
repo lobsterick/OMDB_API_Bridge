@@ -184,7 +184,7 @@ class MovieRemoteRequestsTestCase(TestCase):
         new_count = Movie.objects.all().count()
         self.assertNotEqual(old_count, new_count)
 
-    def get_from_db_when_post_movie_existing_in_db(self): # TODO check, why error
+    def test_get_from_db_when_post_movie_existing_in_db(self): # TODO check, why error
         self.client.post('/api/movies', {'title': 'Batman'}, format='json')
         old_count = Movie.objects.all().count()
         second_post = self.client.post('/api/movies', {'title': 'Batman'}, format='json')
