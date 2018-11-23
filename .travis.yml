@@ -4,9 +4,9 @@ python:
 install:
 - pip install -r requirements.txt
 env:
-- DJ_DEBUG=False DATABASE_URL=postgres://postgres@localhost/travisdb1
+- DJ_DEBUG=False 
 before_script:
-- psql -c "CREATE DATABASE travisdb1;" -U postgres
+- psql -c "CREATE DATABASE travisdb;" -U postgres
 - python manage.py migrate --noinput
 script:
 - python manage.py test
