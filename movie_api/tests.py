@@ -2,6 +2,7 @@ from django.test import TestCase
 from .models import Movie, Rating, Comment
 from .serializers import MovieSerializer, RatingSerializer, CommentSerializer
 import requests
+from rest_framework.test import APIClient
 
 
 
@@ -102,3 +103,89 @@ class SerializersTestCase(TestCase):
         new_comment.save()
         new_count = Comment.objects.count()
         self.assertNotEqual(old_count, new_count)
+
+
+class MovieRemoteRequestsTestCase(TestCase):
+    """Test POST and GET methods on /movie"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.movie_1_data = {"Title": "Batman", "Year": "1989", "Rated": "PG-13", "Released": "23 Jun 1989", "Runtime": "126 min", "Genre": "Action, Adventure", "Director": "Tim Burton", "Writer": "Bob Kane (Batman characters), Sam Hamm (story), Sam Hamm (screenplay), Warren Skaaren (screenplay)", "Actors": "Michael Keaton, Jack Nicholson, Kim Basinger, Robert Wuhl", "Plot": "The Dark Knight of Gotham City begins his war on crime with his first major enemy being the clownishly homicidal Joker.", "Language": "English, French, Spanish", "Country":"USA, UK", "Awards":"Won 1 Oscar. Another 8 wins & 26 nominations.", "Poster":"https://m.media-amazon.com/images/M/MV5BMTYwNjAyODIyMF5BMl5BanBnXkFtZTYwNDMwMDk2._V1_SX300.jpg", "Ratings":[{"Source": "Internet Movie Database", "Value": "7.6/10"}, {"Source": "Rotten Tomatoes", "Value": "72%"}, {"Source": "Metacritic", "Value": "69/100"}], "Metascore": "69", "imdbRating": "7.6", "imdbVotes": "303,988", "imdbID": "tt0096895", "Type": "movie", "DVD": "25 Mar 1997", "BoxOffice": "N/A", "Production": "Warner Bros. Pictures", "Website": "N/A", "Response": "True"}
+        self.movie_2_data = {"Title":"The Avengers","Year":"2012","Rated":"PG-13","Released":"04 May 2012","Runtime":"143 min","Genre":"Action, Adventure, Sci-Fi","Director":"Joss Whedon","Writer":"Joss Whedon (screenplay), Zak Penn (story), Joss Whedon (story)","Actors":"Robert Downey Jr., Chris Evans, Mark Ruffalo, Chris Hemsworth","Plot":"Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from enslaving humanity.","Language":"English, Russian, Hindi","Country":"USA","Awards":"Nominated for 1 Oscar. Another 38 wins & 79 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.1/10"},{"Source":"Rotten Tomatoes","Value":"92%"},{"Source":"Metacritic","Value":"69/100"}],"Metascore":"69","imdbRating":"8.1","imdbVotes":"1,132,357","imdbID":"tt0848228","Type":"movie","DVD":"25 Sep 2012","BoxOffice":"$623,279,547","Production":"Walt Disney Pictures","Website":"http://marvel.com/avengers_movie","Response":"True"}
+
+    def test_client_get_request_movie_one_or_multiple(self):
+        """Test, if client's get request on /movies return
+        real data from database for one or many requests"""
+        movie_1 = MovieSerializer(data=self.movie_1_data)
+        if movie_1.is_valid():
+            movie_1.save()
+        response = self.client.get('/api/movies')
+        self.assertEqual(response.status_code, requests.codes.ok)
+        response_serialized = MovieSerializer(data=response.data, many=True)
+        self.assertTrue(response_serialized.is_valid())
+        self.assertEqual(len(response_serialized.data), 1)
+        self.assertEqual(response_serialized.data[0]["Title"], self.movie_1_data["Title"])
+        with self.assertRaises(IndexError):
+            x = response_serialized.data[1]["Title"]
+
+        movie_2 = MovieSerializer(data=self.movie_2_data)
+        if movie_2.is_valid():
+            movie_2.save()
+        response = self.client.get('/api/movies')
+        self.assertEqual(response.status_code, requests.codes.ok)
+        response_serialized = MovieSerializer(data=response.data, many=True)
+        self.assertTrue(response_serialized.is_valid())
+        self.assertEqual(len(response_serialized.data), 2)
+        self.assertEqual(response_serialized.data[1]["Title"], self.movie_2_data["Title"])
+        with self.assertRaises(IndexError):
+            x = response_serialized.data[2]["Title"]
+
+    def client_get_by_order_dsc(self):
+        # TODO not working - can't pass data with GET request, problem from github.com/encode/django-rest-framework/pull/1463
+        # but working normally when server start
+        movie_1 = MovieSerializer(data=self.movie_1_data)
+        if movie_1.is_valid():
+            movie_1.save()
+        movie_2 = MovieSerializer(data=self.movie_2_data)
+        if movie_2.is_valid():
+            movie_2.save()
+        response = self.client.get('/api/movies', data={'order': 'dsc'})
+        print(response.data)
+        first_id = response.data[0]["id"]
+        second_id = response.data[1]["id"]
+        print(f"\nId from first {first_id} should be bigger than id from second {second_id}")
+        self.assertTrue(response.data[0]["id"] > response.data[1]["id"])
+
+    def client_get_by_order_dsc_with_bad_parameter(self):
+        # TODO not working - can't pass data with GET request, but working normally when server start
+        response = self.client.get('/api/movies', data={"order": "SomeInvalidText"})
+        self.assertTrue(response.data["Error"])
+
+    def test_client_post_request_movie_with_good_data(self):
+        response = self.client.post('/api/movies', {'title': 'Batman'}, format='json')
+        self.assertEqual(response.status_code, requests.codes.ok)
+        self.assertEqual(response.data["Title"], "Batman")
+
+    def test_client_post_request_nonexistent_movie(self):
+        response = self.client.post('/api/movies', {'title': 'SomeNonExistingMovie'}, format='json')
+        self.assertEqual(response.status_code, requests.codes.no_content)
+        self.assertTrue(response.data["Error"])
+
+    def test_client_post_request_movie_with_bad_data(self):
+        response = self.client.post('/api/movies', {'title_name': 'Batman'}, format='json')
+        self.assertEqual(response.status_code, requests.codes.bad_request)
+        self.assertTrue(response.data["Error"])
+
+    def test_save_movie_to_database_after_first_post(self):
+        old_count = Movie.objects.all().count()
+        self.client.post('/api/movies', {'title': 'Batman'}, format='json')
+        new_count = Movie.objects.all().count()
+        self.assertNotEqual(old_count, new_count)
+
+    def get_from_db_when_post_movie_existing_in_db(self): # TODO check, why error
+        self.client.post('/api/movies', {'title': 'Batman'}, format='json')
+        old_count = Movie.objects.all().count()
+        second_post = self.client.post('/api/movies', {'title': 'Batman'}, format='json')
+        new_count = Movie.objects.all().count()
+        self.assertEqual(old_count, new_count)
+        self.assertEqual(Movie.objects.get(id=1).Title, second_post.data["Title"])
