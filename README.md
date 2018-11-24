@@ -30,5 +30,13 @@ Also, for testing purpose, i suggest using software like [Postman](https://www.g
 
 If you want test, if this app working properly, use `manage.py test` command (localserver) or check *"<u>Travis Badge</u>"* below *Title*.
 
+## Routes and parameters
+All API-related routes are available on /api route.
+* **POST */api/movies*:** with required parameter `title` containing movie title, returning details for given movie title,
+* **GET */api/movies*:** with optional parameter `order` equal to `dsc` for descending order of all movies, returning all movies fetched from external database,
+* **POST */api/comments*:** with required parameter `movie_id` containing id of movie existing in database and parameter `comment_body` containing text of a new comment, returning added comment (if successful)
+* **GET */api/comments*:** with optional parameter `movie_id` containing id of movie existing in database, returning all comments in database or (with argument) all comments for given `movie_id`.
+
+
 ## Known problems
 * In `test.py`, there are some tests (all for GET requests) that fail. It looks like APIClient() GET requests containing body information is getting by server without this additional information. Luckily, outside test environment all is working properly. Also - [it's still being debated, if GET request should contain body data](https://github.com/postmanlabs/postman-app-support/issues/131), but it was necessary for fulfilling the requirements.
