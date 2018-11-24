@@ -1,9 +1,9 @@
-# Movie API based on OMDB-API 
+# OMDB-API-Bridge
 [![Build Status](https://Travis-ci.com/lobsterick/OMDB_API_bridge.svg?branch=master)](https://travis-ci.com/lobsterick/OMDB_API_bridge) 
 [![Heroku](http://heroku-badge.herokuapp.com/?app=omdb-api-bridge-lobsterick&style=flat&svg=1&root=api)](https://omdb-api-bridge-lobsterick.herokuapp.com/api/)
 
 
-## What is OMDB-API-bridge?
+## What is OMDB-API-Bridge?
 OMBD-API-bridge is *Proof-of-Concept* project for using (*existing*) and making (*own*) API's in **Django Rest Framework**. It based on external [OMDB-API](http://www.omdbapi.com/) for getting movies and serving them to user of this app in similar form.
 Additional features (compare to OMDB-API) of this app are:
 * saving all data fetched from OMDB-API to own database ([<u>can be useful, because OMDB-API now has limit of 1000 requests from one API-key</u>](https://www.patreon.com/bePatron?u=5038490))
