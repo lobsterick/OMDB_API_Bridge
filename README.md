@@ -1,7 +1,4 @@
 # OMDB-API-Bridge
-[![Build Status](https://Travis-ci.com/lobsterick/OMDB_API_Bridge.svg?branch=master)](https://travis-ci.com/lobsterick/OMDB_API_Bridge) 
-
-
 
 ## What is OMDB-API-Bridge?
 OMBD-API-bridge is *Proof-of-Concept* project for using (*existing*) and making (*own*) API's in **Django Rest Framework**. It based on external [OMDB-API](http://www.omdbapi.com/) for getting movies and serving them to user of this app in similar form.
