@@ -1,6 +1,5 @@
 # OMDB-API-Bridge
 [![Build Status](https://Travis-ci.com/lobsterick/OMDB_API_Bridge.svg?branch=master)](https://travis-ci.com/lobsterick/OMDB_API_Bridge) 
-[![Heroku](http://heroku-badges.herokuapp.com/?app=omdb-api-bridge-lobsterick&svg=1&root=api)](https://omdb-api-bridge-lobsterick.herokuapp.com/api/)
 
 
 
